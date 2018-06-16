@@ -13,9 +13,12 @@ function _M:download_from_youtube(video_url)
     local video_url_hash = constants:get_video_hash(video_url)
     local local_file_name = '/root/sights/videos/' .. video_url_hash .. '.mp4'
     local redis_client = require("libs.redis")
-    redis_client:set(video_url_hash, nil, 3600)
+    local cjson = require("cjson")
+    local downloading_info = cjson.encode({video_path=nil})
+    redis_client:set(video_url_hash, downloading_info, 3600)
     os.execute("youtube-dl -f mp4  -o " .. local_file_name .. " " .. video_url)
-    redis_client:set(video_url_hash, local_file_name, 3600)
+    downloading_info = cjson.encode({video_path=local_file_name})
+    redis_client:set(video_url_hash, downloading_info, 3600)
 end
 
 return _M
