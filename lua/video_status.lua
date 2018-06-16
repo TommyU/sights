@@ -17,7 +17,7 @@ end
 -- check status in redis
 local redis_client = require("libs.redis")
 local cjson = require("cjson")
-local info = redis_client:get(youtube_url)
+local info = redis_client:get(constants.get_video_hash(youtube_url))
 if info then
     local json_info = cjson.decode(info)
     if json_info.video_path then

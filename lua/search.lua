@@ -5,7 +5,6 @@
 ---
 local response = require('libs.response')
 local google_search = require("libs.google_search")
-local cjson = require("cjson")
 
 local args = ngx.req.get_uri_args()
 local keyword = args.keyword

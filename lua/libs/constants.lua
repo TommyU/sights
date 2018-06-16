@@ -10,4 +10,13 @@ local _T = {
     VIDEO_DOWNLOADED = 2
 }
 
+function _T:get_video_hash(video_url)
+    local resty_sha256 = require "resty.sha256"
+    local str = require "resty.string"
+    local sha256 = resty_sha256:new()
+    sha256:update(video_url)
+    local digest = sha256:final()
+    return str.to_hex(digest)
+end
+
 return _T
