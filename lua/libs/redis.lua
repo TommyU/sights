@@ -22,7 +22,6 @@ end
 
 function _M:close()
     if self.enable_pool then
-        ngx.log(ngx.DEBUG, "will put redis connection into pool")
         local ok, err = self.redis_client:set_keepalive(10000, 10)
         if not ok then
             local err_msg = "failed to set keepalive: " .. err
@@ -42,7 +41,10 @@ end
 
 function _M:get(key)
     assert(self:connect())
-    local ret = self.redis_client:get(key)
+    local ret,err = self.redis_client:get(key)
+    if err or ret==ngx.null then
+        ret=nil
+    end
     assert(self:close())
     return ret
 end
