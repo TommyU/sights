@@ -3,8 +3,8 @@
 --- Created by tommy.
 --- DateTime: 2018/6/16 下午4:30
 ---
-local _M = {redis_client=nil, enable_pool=true}
-_M.__index=_M
+local _M = { redis_client = nil, enable_pool = true }
+_M.__index = _M
 
 function _M:connect()
     local redis = require "resty.redis"
@@ -13,8 +13,9 @@ function _M:connect()
 
     local ok, err = self.redis_client:connect("127.0.0.1", 6379)
     if not ok then
-        ngx.log(ngx.ERR, "failed to connect: " .. err)
-        return false
+        local err_msg = "failed to connect: " .. err
+        ngx.log(ngx.ERR, err_msg)
+        return false, err_msg
     end
     return true
 end
@@ -22,41 +23,34 @@ end
 function _M:close()
     if self.enable_pool then
         ngx.log(ngx.DEBUG, "will put redis connection into pool")
-	local ok, err = self.redis_client:set_keepalive(10000, 10)
+        local ok, err = self.redis_client:set_keepalive(10000, 10)
         if not ok then
-            ngx.log(ngx.ERR, "failed to set keepalive: " .. err)
-            return false
+            local err_msg = "failed to set keepalive: " .. err
+            ngx.log(ngx.ERR, err_msg)
+            return false, err_msg
         end
     else
         local ok, err = self.redis_client:close()
         if not ok then
-            ngx.log(ngx.ERR, "failed to close redis connection: " .. err)
-            return false
+            local err_msg = "failed to close redis connection:  " .. err
+            ngx.log(ngx.ERR, err_msg)
+            return false, err_msg
         end
     end
     return true
 end
 
 function _M:get(key)
-    local ret=nil
-    assert(self:connect(), "failed to connect redis client to server")
-    result, err = self.redis_client:get(key)
-    if err then
-	ngx.log(ngx.ERR, "oopssssssss: " .. err )
-        ret = nil
-    else
-	ret = result
-    end
-    assert(self:close(), "failed to close redis connection")
+    assert(self:connect())
+    local ret = self.redis_client:get(key)
+    assert(self:close())
     return ret
 end
 
 function _M:set(key, value, timeout_in_seconds)
-    local ret=nil
-    assert(self:connect(), "failed to connect to redis")
-    ret = self.redis_client:set(key, value, timeout_in_seconds*1000)
-    assert(self:close(), "failed to close redis connection")
-    return ret
+    assert(self:connect())
+    self.redis_client:set(key, value, timeout_in_seconds * 1000)
+    assert(self:close())
 end
 
 return _M
