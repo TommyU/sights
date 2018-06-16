@@ -9,8 +9,11 @@ local cjson = require("cjson")
 
 local args = ngx.req.get_uri_args()
 local keyword = args.keyword
+ngx.log(ngx.DEBUG, '------args:--------' .. keyword)
 if keyword then
-    local google_results = google_search(keyword).search_youtube()
+    local page_index=1
+    local gsearch = google_search:new(keyword)
+    local google_results = gsearch:search_youtube(page_index)
     if google_results then
         ngx.say(cjson.encode(google_results))
         ngx.eof()
