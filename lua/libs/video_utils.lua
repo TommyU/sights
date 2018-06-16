@@ -3,22 +3,23 @@
 --- Created by tommy.
 --- DateTime: 2018/6/16 下午7:07
 ---
+local constants = require("libs.constants")
+local redis_client = require("libs.redis")
+local expire_time_in_seconds = 3600
 
 local _M = {}
 _M.__index = _M
 
 function _M:download_from_youtube(video_url)
     ngx.log(ngx.DEBUG, "------start to download video: " .. video_url)
-    local constants = require("libs.constants")
     local video_url_hash = constants:get_video_hash(video_url)
     local local_file_name = '/root/sights/videos/' .. video_url_hash .. '.mp4'
-    local redis_client = require("libs.redis")
     local cjson = require("cjson")
-    local downloading_info = cjson.encode({video_path=nil})
-    redis_client:set(video_url_hash, downloading_info, 3600)
+    local downloading_info = cjson.encode({ video_path = nil })
+    redis_client:set(video_url_hash, downloading_info, expire_time_in_seconds)
     os.execute("youtube-dl -f mp4  -o " .. local_file_name .. " " .. video_url)
-    downloading_info = cjson.encode({video_path=local_file_name})
-    redis_client:set(video_url_hash, downloading_info, 3600)
+    downloading_info = cjson.encode({ video_path = local_file_name })
+    redis_client:set(video_url_hash, downloading_info, expire_time_in_seconds)
 end
 
 return _M
