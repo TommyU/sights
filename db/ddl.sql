@@ -22,4 +22,5 @@ COLLATE='utf8_unicode_ci'
 ENGINE=InnoDB;
 
 grant all privileges on sight.* to 'sights'@'127.0.0.1' identified by 'sights_pw';
+grant all privileges on sight.* to 'sights'@'localhost' identified by 'sights_pw';
 

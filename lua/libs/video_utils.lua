@@ -41,8 +41,7 @@ local function add2db(keyword, video_url, video_name)
     local stored_path = get_stored_path(video_url_hash)
     video_url_hash = ndk.set_var.set_quote_sql_str(video_url_hash)
     stored_path = ndk.set_var.set_quote_sql_str(stored_path)
-   
- 
+
     local video_url_hash = constants:get_video_hash(video_url)
     local params = {
         ngx.time(), keyword, video_url,
@@ -50,8 +49,8 @@ local function add2db(keyword, video_url, video_name)
         ngx.time(), stored_path
     }
 
-    for _,v in ipairs(params) do
-	ngx.log(ngx.DEBUG, '==>' .. v)
+    for _, v in ipairs(params) do
+        ngx.log(ngx.DEBUG, '==>' .. v)
     end
     sql = string.format(sql, params[1], params[2], params[3], params[4], params[5], params[6], params[7])
     local res = assert(mysql_client:query(sql))
