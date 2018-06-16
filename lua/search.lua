@@ -15,7 +15,7 @@ if keyword then
     local gsearch = google_search:new(keyword)
     local google_results = gsearch:search_youtube(page_index)
     if google_results then
-        ngx.say(cjson.encode(google_results))
+        response.json_response(google_results)
         ngx.eof()
 
         --TODO
