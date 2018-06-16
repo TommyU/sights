@@ -17,9 +17,9 @@ function website_search(){
 
 $(function(){
     $('form').submit(false);  //disable submit of forms
-    $('#q').bind('keypress',function(event){
+    $('#q').bind('keypress', function(event){
         if(event.keyCode == "13"){
-	    website_search();
-	}
+            website_search();
+	    }
     });
 });
