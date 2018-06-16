@@ -6,21 +6,23 @@
 local _M = {redis_client=nil, enable_pool=true}
 _M.__index=_M
 
-function _M:ensure_client_available()
+function _M:connect()
     local redis = require "resty.redis"
     self.redis_client = redis:new()
-    self.redis_client:set_timeout(200) -- 0.2 sec
+    self.redis_client:set_timeout(1000) -- 1 sec
 
     local ok, err = self.redis_client:connect("127.0.0.1", 6379)
     if not ok then
         ngx.log(ngx.ERR, "failed to connect: " .. err)
         return false
     end
+    return true
+end
 
+function _M:close()
     if self.enable_pool then
-        -- put it (back) into the connection pool of size 100,
-        -- with 10 seconds max idle time
-        local ok, err = self.redis_client:set_keepalive(10000, 100)
+        ngx.log(ngx.DEBUG, "will put redis connection into pool")
+	local ok, err = self.redis_client:set_keepalive(10000, 10)
         if not ok then
             ngx.log(ngx.ERR, "failed to set keepalive: " .. err)
             return false
@@ -36,13 +38,25 @@ function _M:ensure_client_available()
 end
 
 function _M:get(key)
-    assert(self:ensure_client_available(), "failed to get redis client from pool")
-    return self.redis_client:get(key)
+    local ret=nil
+    assert(self:connect(), "failed to connect redis client to server")
+    result, err = self.redis_client:get(key)
+    if err then
+	ngx.log(ngx.ERR, "oopssssssss: " .. err )
+        ret = nil
+    else
+	ret = result
+    end
+    assert(self:close(), "failed to close redis connection")
+    return ret
 end
 
 function _M:set(key, value, timeout_in_seconds)
-    assert(self:ensure_client_available(), "failed to get redis client from pool")
-    return self.redis_client:set(key, value, timeout_in_seconds)
+    local ret=nil
+    assert(self:connect(), "failed to connect to redis")
+    ret = self.redis_client:set(key, value, timeout_in_seconds*1000)
+    assert(self:close(), "failed to close redis connection")
+    return ret
 end
 
 return _M
