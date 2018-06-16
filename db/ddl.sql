@@ -5,15 +5,17 @@ create database sights;
 CREATE TABLE IF NOT EXISTS `sights`.`video_tab` (
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`ctime` INT UNSIGNED NOT NULL,
-	`last_downloaded_time` INT UNSIGNED NOT NULL,
-	`deleted_time` INT UNSIGNED NOT NULL,
+	`last_downloaded_time` INT UNSIGNED ,
+	`downloaded_times` INT UNSIGNED NOT NULL DEFAULT 1,
+	`deleted_time` INT UNSIGNED ,
 	`keyword` VARCHAR(250) NOT NULL,
 	`youtube_url` BLOB NOT NULL,
+	`youtube_url_hash` VARCHAR(64) NOT NULL,
 	`video_name` VARCHAR(512) NOT NULL,
-	`stored_path` VARCHAR(1024) NOT NULL,
+	`stored_path` VARCHAR(1024) ,
 	`is_deleted` TINYINT UNSIGNED NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`),
-	UNIQUE INDEX idx_keyword (`keyword`),
+	UNIQUE INDEX idx_video_hash (`youtube_url_hash`),
 	INDEX idx_dtime_status (`last_downloaded_time`, `is_deleted`)
 )
 COLLATE='utf8_unicode_ci'

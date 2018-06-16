@@ -9,16 +9,18 @@ local video_utils = require("libs.video_utils")
 
 local args = ngx.req.get_uri_args()
 
-local youtube_url = args.video_url
-if not youtube_url then
-    response.json_response({ msg = "arg video_url" }, 400)
+local keyword = args.keyword
+local video_url = args.video_url
+local video_name = args.video_name
+if not keyword or not video_url or not video_name then
+    response.json_response({ msg = "arg keyword/video_url/video_name" }, 400)
 end
 
 
 -- check status in redis
 local redis_client = require("libs.redis")
 local cjson = require("cjson")
-local info = redis_client:get(constants:get_video_hash(youtube_url))
+local info = redis_client:get(constants:get_video_hash(video_url))
 if info then
     local json_info = cjson.decode(info)
     if json_info.video_path then
@@ -29,5 +31,5 @@ if info then
 else
     response.json_response({ status = constants.VIDEO_NOT_INITED }, 200, true)
     local delay_seconds = 0
-    ngx.timer.at(delay_seconds, video_utils.download_from_youtube, youtube_url)
+    ngx.timer.at(delay_seconds, video_utils.download_from_youtube, video_url, keyword, video_name)
 end

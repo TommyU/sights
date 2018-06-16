@@ -5,21 +5,74 @@
 ---
 local constants = require("libs.constants")
 local redis_client = require("libs.redis")
+local mysql_client = require("libs.db")
+local cjson = require("cjson")
 local expire_time_in_seconds = 3600
 
 local _M = {}
 _M.__index = _M
 
-function _M:download_from_youtube(video_url)
+local function exists(name)
+    local f = io.open(name, "r")
+    if f ~= nil then
+        io.close(f)
+        return true
+    else
+        return false
+    end
+end
+
+local function update_redis_cache(video_path)
+    local downloading_info = cjson.encode({ video_path = video_path })
+    redis_client:set(video_url_hash, downloading_info, expire_time_in_seconds)
+end
+
+local function get_stored_path(video_url_hash)
+    return '/root/sights/videos/' .. video_url_hash .. '.mp4'
+end
+
+function _M:download_from_youtube(video_url, keyword, video_name)
     ngx.log(ngx.DEBUG, "------start to download video: " .. video_url)
     local video_url_hash = constants:get_video_hash(video_url)
-    local local_file_name = '/root/sights/videos/' .. video_url_hash .. '.mp4'
-    local cjson = require("cjson")
-    local downloading_info = cjson.encode({ video_path = nil })
-    redis_client:set(video_url_hash, downloading_info, expire_time_in_seconds)
-    os.execute("youtube-dl -f mp4  -o " .. local_file_name .. " " .. video_url)
-    downloading_info = cjson.encode({ video_path = local_file_name })
-    redis_client:set(video_url_hash, downloading_info, expire_time_in_seconds)
+    local local_file_name = get_stored_path(video_url_hash)
+
+    if exists(local_file_name) then
+        update_redis_cache(local_file_name)
+    else
+        update_redis_cache(nil)
+        os.execute("youtube-dl -f mp4  -o " .. local_file_name .. " " .. video_url)
+        update_redis_cache(local_file_name)
+        self.add2db(keyword, video_url, video_name)
+    end
+end
+
+function _M:add2db(keyword, video_url, video_name)
+    local sql = [[insert into sights.video_tab(ctime, keyword, youtube_url, youtube_url_hash, video_name, last_downloaded_time, stored_path)
+    values(%d, '%s', '%s', '%s', '%s', %d, '%s')]]
+    keyword = ndk.set_var.set_quote_sql_str(keyword)
+    video_url = ndk.set_var.set_quote_sql_str(video_url)
+    video_name = ndk.set_var.set_quote_sql_str(video_name)
+    local params = { ngx.time(), keyword, video_url, constants.get_video_hash(video_url), video_name, ngx.time(), get_stored_path(video_url_hash) }
+    local res = assert(mysql_client:query(sql, params))
+    return res
+end
+
+function _M:mark_download2db(youtube_url)
+    -- meant for duplicated downloading(in case file deleted already)
+    local sql = [[update sights.video_tab set last_downloaded_time = %d, stored_path='%s', downloaded_times=downloaded_times+1 where youtube_url_hash='%s' ]]
+    local video_url_hash = constants.get_video_hash(youtube_url)
+    local params = { ngx.time(), get_stored_path(video_url_hash), video_url_hash }
+    local res = assert(mysql_client:query(sql, params))
+    return res
+end
+
+function _M:mark_deleted2db(youtube_url)
+    -- in case disk is full, some files will get deleted by cron jobs
+    local sql = [[update sights.video_tab set deleted_time = %d, is_deleted=1 where youtube_url_hash='%s' ]]
+    local video_url_hash = constants.get_video_hash(youtube_url)
+    local params = { ngx.time(), video_url_hash }
+    local res = assert(mysql_client:query(sql, params))
+    return res
 end
 
 return _M
