@@ -6,8 +6,8 @@
 local _T = {
     -- video status
     VIDEO_NOT_INITED = 0,
-    VIDEO_DOWNLOADING=1,
-    VIDEO_DOWNLOADED=2
+    VIDEO_DOWNLOADING = 1,
+    VIDEO_DOWNLOADED = 2
 }
 
 return _T

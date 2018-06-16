@@ -4,11 +4,11 @@
 --- DateTime: 2018/6/16 下午12:15
 ---
 local _M = {}
-_M.__index=_M
+_M.__index = _M
 local cjson = require("cjson")
 
 function _M:new(keyword)
-    return setmetatable({keyword = keyword, start_index=1}, self)
+    return setmetatable({ keyword = keyword, start_index = 1 }, self)
 end
 
 function _M:search_youtube(start_index)
@@ -20,10 +20,10 @@ function _M:search_youtube(start_index)
         self.start_index = start_index
     end
 
-    local q = ngx.encode_args({q=self.keyword, start=self.start_index})
+    local q = ngx.encode_args({ q = self.keyword, start = self.start_index })
     local res, err = httpc:request_uri(
             google_url .. "&" .. q,
-	    {ssl_verify=false}
+            { ssl_verify = false }
     )
 
     if err ~= nil then
@@ -36,17 +36,17 @@ function _M:search_youtube(start_index)
 end
 
 function _M:format_google_search_result(json_string)
-    local formated_json = {total=0, items = {}}
+    local formated_json = { total = 0, items = {} }
 
     local json_result = cjson.decode(json_string)
 
     formated_json.total = json_result.searchInformation.totalResults
-    ngx.log(ngx.DEBUG, "total results: " ..  formated_json.total)
-    for _,item in ipairs(json_result.items) do
-        formated_json.items[#formated_json.items+1] = {
-            title=item.title,
-            link=item.link,
-            htmlTitle=item.htmlTitle
+    ngx.log(ngx.DEBUG, "total results: " .. formated_json.total)
+    for _, item in ipairs(json_result.items) do
+        formated_json.items[#formated_json.items + 1] = {
+            title = item.title,
+            link = item.link,
+            htmlTitle = item.htmlTitle
         }
     end
     return formated_json
