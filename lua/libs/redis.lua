@@ -41,9 +41,9 @@ end
 
 function _M:get(key)
     assert(self:connect())
-    local ret,err = self.redis_client:get(key)
-    if err or ret==ngx.null then
-        ret=nil
+    local ret, err = self.redis_client:get(key)
+    if err or ret == ngx.null then
+        ret = nil
     end
     assert(self:close())
     return ret

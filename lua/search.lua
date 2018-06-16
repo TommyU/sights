@@ -11,7 +11,7 @@ local args = ngx.req.get_uri_args()
 local keyword = args.keyword
 ngx.log(ngx.DEBUG, '------args:--------' .. keyword)
 if keyword then
-    local page_index=1
+    local page_index = 1
     local gsearch = google_search:new(keyword)
     local google_results = gsearch:search_youtube(page_index)
     if google_results then
@@ -22,9 +22,9 @@ if keyword then
         -- cache the results?
         -- do some logging?
     else
-        response.json_response({msg="no search results"})
+        response.json_response({ msg = "no search results" })
     end
 else
-    response.json_response({msg="please input a keyword"}, 400)
+    response.json_response({ msg = "please input a keyword" }, 400)
 end
 
