@@ -3,49 +3,45 @@
 --- Created by tommy.
 --- DateTime: 2018/6/16 下午4:30
 ---
-local _M = {redis_client=nil}
+local _M = {redis_client=nil, enable_pool=true}
 _M.__index=_M
 
-function _M:init()
-    if not self.is_client_available() then
-        local redis = require "resty.redis"
-        self.redis_client = redis:new()
-        self.redis_client:set_timeout(200) -- 0.2 sec
+function _M:ensure_client_available()
+    local redis = require "resty.redis"
+    self.redis_client = redis:new()
+    self.redis_client:set_timeout(200) -- 0.2 sec
 
-        local ok, err = self.redis_client:connect("127.0.0.1", 6379)
-        if not ok then
-            ngx.log(ngx.ERR, "failed to connect: " .. err)
-            return false
-        end
+    local ok, err = self.redis_client:connect("127.0.0.1", 6379)
+    if not ok then
+        ngx.log(ngx.ERR, "failed to connect: " .. err)
+        return false
+    end
 
-        -- put it into the connection pool of size 100,
+    if self.enable_pool then
+        -- put it (back) into the connection pool of size 100,
         -- with 10 seconds max idle time
         local ok, err = self.redis_client:set_keepalive(10000, 100)
         if not ok then
             ngx.log(ngx.ERR, "failed to set keepalive: " .. err)
             return false
         end
+    else
+        local ok, err = self.redis_client:close()
+        if not ok then
+            ngx.log(ngx.ERR, "failed to close redis connection: " .. err)
+            return false
+        end
     end
     return true
 end
 
-function _M:is_client_available()
-    if not self.redis_client then
-        return false
-    end
-end
-
 function _M:get(key)
-    if not self.is_client_available() then
-        assert(self:init(), "failed to init redis client with pool")
-    end
+    assert(self:ensure_client_available(), "failed to get redis client from pool")
     return self.redis_client:get(key)
 end
 
 function _M:set(key, value, timeout_in_seconds)
-    if not self.is_client_available() then
-        assert(self:init(), "failed to init redis client with pool")
-    end
+    assert(self:ensure_client_available(), "failed to get redis client from pool")
     return self.redis_client:set(key, value, timeout_in_seconds)
 end
 
