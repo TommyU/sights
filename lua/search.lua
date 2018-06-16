@@ -14,8 +14,7 @@ if keyword then
     local gsearch = google_search:new(keyword)
     local google_results = gsearch:search_youtube(page_index)
     if google_results then
-        response.json_response(google_results)
-        ngx.eof()
+        response.json_response(google_results, 200, true)
 
         --TODO
         -- cache the results?
