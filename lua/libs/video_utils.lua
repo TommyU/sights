@@ -9,13 +9,13 @@ _M.__index = _M
 
 function _M:download_from_youtube(video_url)
     ngx.log(ngx.DEBUG, "------start to download video: " .. video_url)
-    local constants = require("constants")
-    local video_url_hash = constants.get_video_hash(video_url)
+    local constants = require("libs.constants")
+    local video_url_hash = constants:get_video_hash(video_url)
     local local_file_name = '/root/sights/videos/' .. video_url_hash .. '.mp4'
-    redis_client.set(video_url_hash, nil, 3600)
+    local redis_client = require("libs.redis")
+    redis_client:set(video_url_hash, nil, 3600)
     os.execute("youtube-dl -f mp4  -o " .. local_file_name .. " " .. video_url)
-    local redis_client = require("redis")
-    redis_client.set(video_url_hash, local_file_name, 3600)
+    redis_client:set(video_url_hash, local_file_name, 3600)
 end
 
 return _M

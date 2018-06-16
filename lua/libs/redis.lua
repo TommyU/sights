@@ -51,7 +51,8 @@ end
 
 function _M:set(key, value, timeout_in_seconds)
     assert(self:connect())
-    self.redis_client:set(key, value, timeout_in_seconds * 1000)
+    self.redis_client:set(key, value)
+    self.redis_client:expire(key, timeout_in_seconds*1000)
     assert(self:close())
 end
 
