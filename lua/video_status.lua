@@ -5,6 +5,7 @@
 ---
 local constants = require("libs.constants")
 local response = require("libs.response")
+local video_utils = require("libs.video_utils")
 
 local args = ngx.req.get_uri_args()
 
@@ -26,5 +27,7 @@ if info then
         response.json_response({ status = constants.VIDEO_DOWNLOADING })
     end
 else
-    response.json_response({ status = constants.VIDEO_NOT_INITED })
+    response.json_response({ status = constants.VIDEO_NOT_INITED }, 200, true)
+    local delay_seconds = 0
+    ngx.timer.at(delay_seconds, video_utils.download_from_youtube, youtube_url)
 end

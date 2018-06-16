@@ -7,7 +7,7 @@
 local _M = {}
 local cjson = require("cjson")
 
-function _M.json_response(table_obj, status)
+function _M.json_response(table_obj, status, continue)
     ngx.header.content_type = "application/json;charset=utf-8"
 
     if not status then
@@ -15,7 +15,11 @@ function _M.json_response(table_obj, status)
     end
     ngx.status = status
     ngx.say(cjson.encode(table_obj))
-    ngx.exit(ngx.HTTP_OK)
+    if continue then
+        ngx.eof()
+    else
+        ngx.exit(ngx.HTTP_OK)
+    end
 end
 
 return _M
