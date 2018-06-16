@@ -6,6 +6,8 @@
 local _M = { client = nil, enable_pool = true }
 _M.__index = _M
 
+local mysql = require("resty.mysql")
+
 function _M:connect()
     local db, err = mysql:new()
     if not db then
@@ -33,7 +35,7 @@ function _M:connect()
     db:set_timeout(1000) -- 1 sec
     self.client = db
 
-    return True
+    return true
 end
 
 function _M:close()
@@ -55,17 +57,16 @@ function _M:close()
     return true
 end
 
-function _M:query(sql, params)
+function _M:query(sql)
     -- TODO: params must prevent sql-injection
     assert(self:connect())
 
-    res, err, errno, sqlstate = self.client:query(
-            string.format(sql, params)
-    )
+    res, err, errno, sqlstate = self.client:query(sql)
 
     assert(self:close())
 
     if err then
+	ngx.log(ngx.DEBUG, "=====sql=" .. sql)
         local err_msg ="bad result: " .. err ..  ": " .. errno .. ": " .. sqlstate ..  "."
         ngx.log(ngx.ERR, err_msg)
         return false, err_msg
