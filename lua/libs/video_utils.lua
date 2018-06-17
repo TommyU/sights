@@ -7,7 +7,7 @@ local constants = require("libs.constants")
 local redis_client = require("libs.redis")
 local mysql_client = require("libs.db")
 local cjson = require("cjson")
-local expire_time_in_seconds = 3600
+local EXPIRE_SECONDS = 3600
 
 local _M = {}
 _M.__index = _M
@@ -22,9 +22,9 @@ local function exists(name)
     end
 end
 
-local function update_redis_cache(video_path)
+local function update_redis_cache(video_url_hash, video_path)
     local downloading_info = cjson.encode({ video_path = video_path })
-    redis_client:set(video_url_hash, downloading_info, expire_time_in_seconds)
+    redis_client:set(video_url_hash, downloading_info, EXPIRE_SECONDS)
 end
 
 local function get_stored_path(video_url_hash)
@@ -81,11 +81,11 @@ function _M:download_from_youtube(video_url, keyword, video_name)
     local local_file_name = get_stored_path(video_url_hash)
 
     if exists(local_file_name) then
-        update_redis_cache(local_file_name)
+        update_redis_cache(video_url_hash, local_file_name)
     else
-        update_redis_cache(nil)
+        update_redis_cache(video_url_hash, nil)
         os.execute("youtube-dl -f mp4  -o " .. local_file_name .. " " .. video_url)
-        update_redis_cache(local_file_name)
+        update_redis_cache(video_url_hash, local_file_name)
         add2db(keyword, video_url, video_name)
     end
 end
