@@ -22,7 +22,7 @@ end
 
 function _M:close()
     if self.enable_pool then
-        local ok, err = self.redis_client:set_keepalive(10000, 10)
+        local ok, err = self.redis_client:set_keepalive(20000, 100)
         if not ok then
             local err_msg = "failed to set keepalive: " .. err
             ngx.log(ngx.ERR, err_msg)

@@ -65,8 +65,8 @@ function _M:query(sql)
 
     assert(self:close())
 
+    ngx.log(ngx.DEBUG, "=====sql=" .. sql)
     if err then
-	ngx.log(ngx.DEBUG, "=====sql=" .. sql)
         local err_msg ="bad result: " .. err ..  ": " .. errno .. ": " .. sqlstate ..  "."
         ngx.log(ngx.ERR, err_msg)
         return false, err_msg
