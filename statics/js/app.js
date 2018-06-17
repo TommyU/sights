@@ -36,7 +36,7 @@ function website_watch(video_data){
                      alert("server error!");
                  }else{
                      var v_html = '<video id="player" width="100%" height="auto" autoplay="autoplay" controls>';
-                     v_html+='<source src="'+video_uri+" type="video/mp4" codecs="avc1.42E01E, mp4a.40.2"> </video>';
+                     v_html+='<source src="'+video_uri+'" type="video/mp4" codecs="avc1.42E01E, mp4a.40.2"> </video>';
                      $("#panel_list").toggle();
                      $("#panel_display").toggle();
                      $("#panel_display").html(v_html);
