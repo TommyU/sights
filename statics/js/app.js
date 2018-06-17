@@ -1,6 +1,11 @@
 function website_search(){
     var keyword = $("#q").val();
     $.get( "/api/search?keyword="+keyword, function( data ) {
+        if($("#panel_list").is(":visible")==false){
+           $("#panel_list").toggle();
+           $("#panel_display").toggle();
+        }
+
         html = "";
         if(data.msg != undefined){
             $("result").html(data.msg)
