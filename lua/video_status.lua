@@ -32,7 +32,8 @@ local info = redis_client:get(constants:get_video_hash(video_url))
 if info then
     local json_info = cjson.decode(info)
     if json_info.video_path then
-        response.json_response({ status = constants.VIDEO_DOWNLOADED })
+        local short_video_uri = "/videos/" .. constants:get_video_hash(video_url) .. ".mp4"
+        response.json_response({ status = constants.VIDEO_DOWNLOADED, video_uri = short_video_uri })
     else
         response.json_response({ status = constants.VIDEO_DOWNLOADING })
     end
