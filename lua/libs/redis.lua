@@ -22,7 +22,7 @@ end
 
 function _M:close()
     if self.enable_pool then
-        local ok, err = self.redis_client:set_keepalive(20000, 100)
+        local ok, err = self.redis_client:set_keepalive(100000, 5)
         if not ok then
             local err_msg = "failed to set keepalive: " .. err
             ngx.log(ngx.ERR, err_msg)
@@ -45,7 +45,7 @@ function _M:get(key)
     if err or ret == ngx.null then
         ret = nil
     end
-    assert(self:close())
+    self:close()
     return ret
 end
 
@@ -53,7 +53,7 @@ function _M:set(key, value, timeout_in_seconds)
     assert(self:connect())
     self.redis_client:set(key, value)
     self.redis_client:expire(key, timeout_in_seconds*1000)
-    assert(self:close())
+    self:close()
 end
 
 return _M

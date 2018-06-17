@@ -15,6 +15,7 @@ function website_search(){
                 html +="<td>"+data.items[i].htmlTitle+"</td>";
                 html +="<td>"+ data.items[i].link +"</td>";
                 var sb = encodeURI(keyword) + "|" + encodeURI(data.items[i].link) +"|" + encodeURI(data.items[i].title);
+                sb = btoa(sb);
                 html +='<td><button class="btn btn-info mr-sm-1" type="button" onclick=website_watch(\''+sb+'\')>view</button></td></tr>';
 	        }
 	        $( "#result" ).html(html);
@@ -23,6 +24,7 @@ function website_search(){
 }
 
 function website_watch(video_data){
+    video_data = atob(video_data);
     console.log(video_data);
     var array = video_data.split('|');
     var keyword = btoa(array[0]);
@@ -33,6 +35,7 @@ function website_watch(video_data){
          html = "";
          if(data.status!=undefined){
              if (data.status==0 || data.status==1){
+                 video_data = btoa(video_data);
                  setTimeout("website_watch('"+video_data+"')", 5000);
              }else{
                  //window.location = "/watch.html?data="+video_data
