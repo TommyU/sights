@@ -17,7 +17,7 @@ function website_search(){
                 var sb = encodeURI(keyword) + "|" + encodeURI(data.items[i].link) +"|" + encodeURI(data.items[i].title);
                 html +='<td><button class="btn btn-info mr-sm-1" type="button" onclick=website_watch(\''+sb+'\')>view</button></td></tr>';
 	        }
-	         $( "#result" ).html(html);
+	        $( "#result" ).html(html);
         }
     });
 }
@@ -40,11 +40,16 @@ function website_watch(video_data){
                  if(video_uri==undefined){
                      alert("server error!");
                  }else{
-                     var v_html = '<video id="player" width="100%" height="auto" autoplay="autoplay" controls>';
-                     v_html+='<source src="'+video_uri+'" type="video/mp4" codecs="avc1.42E01E, mp4a.40.2"> </video>';
-                     $("#panel_list").toggle();
-                     $("#panel_display").toggle();
-                     $("#panel_display").html(v_html);
+                     $("#panel_list").hide();
+                     $("#panel_display").show();
+                     var $dom =$("#player", $("#panel_display"))
+                     if($dom && $dom.attr("userdata")==video_data){
+                         //$("#panel_display").max_size();
+                     }else{
+                         var v_html = '<video id="player" width="100%" height="auto" autoplay="autoplay" userdata="'+video_data+'" controls>';
+                         v_html+='<source src="'+video_uri+'" type="video/mp4" codecs="avc1.42E01E, mp4a.40.2"> </video>';
+                         $("#panel_display").html(v_html);
+                     }
                  }
              }
          }else{
