@@ -20,9 +20,9 @@ function website_search(){
 function website_watch(dat){
     console.log(dat);
     var array = dat.split('|');
-    var keyword = array[0];
-    var url = array[1];
-    var title = array[2];
+    var keyword = btoa(array[0]);
+    var url = btoa(array[1]);
+    var title = btoa(array[2]);
 
      $.get( "/api/video_status?keyword="+keyword+"&video_name="+title+"&video_url="+url, function( data ) {
          html = "";

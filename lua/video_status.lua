@@ -12,6 +12,14 @@ local args = ngx.req.get_uri_args()
 local keyword = args.keyword
 local video_url = args.video_url
 local video_name = args.video_name
+
+-- decode
+keyword = ngx.decode_base64(keyword)
+video_url = ngx.decode_base64(video_url)
+video_url = ngx.unescape_uri(video_url)
+video_name = ngx.decode_base64(video_name)
+ngx.log(ngx.DEBUG, '========' .. keyword .. '=====' .. video_name .. '=====' .. video_url)
+
 if not keyword or not video_url or not video_name then
     response.json_response({ msg = "arg keyword/video_url/video_name" }, 400)
 end
