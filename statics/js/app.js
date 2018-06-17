@@ -3,6 +3,7 @@ function website_search(){
     $.get( "/api/search?keyword="+keyword, function( data ) {
         if($("#panel_list").is(":visible")==false){
            $("#panel_list").toggle();
+           $("#player").get(0).pause();
            $("#panel_display").toggle();
         }
 
@@ -30,21 +31,27 @@ function website_watch(video_data){
     var keyword = btoa(array[0]);
     var url = btoa(array[1]);
     var title = btoa(array[2]);
+    $("#panel_list").hide();
+    $("#panel_display").show();
 
      $.get( "/api/video_status?keyword="+keyword+"&video_name="+title+"&video_url="+url, function( data ) {
          html = "";
          if(data.status!=undefined){
              if (data.status==0 || data.status==1){
+                 var html_loading = '<div class="progress">' + 
+                   '<div class="progress-bar progress-bar-striped progress-bar-warning active" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%">' + 
+                    '<span class="sr-only">75% Complete</span>' +
+                   '</div>' +
+                  '</div>';
+                 $("#panel_display").html("<h1>loading...</h1>" + html_loading);
                  video_data = btoa(video_data);
-                 setTimeout("website_watch('"+video_data+"')", 5000);
+                 setTimeout("website_watch('"+video_data+"')", 1000);
              }else{
                  //window.location = "/watch.html?data="+video_data
                  var video_uri = data.video_uri
                  if(video_uri==undefined){
                      alert("server error!");
                  }else{
-                     $("#panel_list").hide();
-                     $("#panel_display").show();
                      var $dom =$("#player", $("#panel_display"))
                      if($dom && $dom.attr("userdata")==video_data){
                          //$("#panel_display").max_size();
