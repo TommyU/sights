@@ -76,11 +76,13 @@ function display_disk_usage(){
     $.get( "/api/disk_usage", function( data ) {
         html = "";
         if(data.msg != undefined){
-            $("result_watched_list").html(data.msg)
+            $("#panel_watched_list").html(data.msg)
         }else{
-            $("result_watched_list").html(data)
+            $("#myModalLabel").html("disk usages");
+            $("#myModalBody").html("<pre>" + data + "</pre>");
+            $("#myModal").show();
         }
-    }
+    });
 }
 
 function display_downloaded_list(){

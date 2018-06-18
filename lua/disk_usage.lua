@@ -5,7 +5,7 @@
 ---
 local file_name = "/tmp/disk"
 os.execute("df -h > " .. file_name)
-local file_obj = lio.open(file_name)
+local file_obj = io.open(file_name)
 for line in file_obj:lines() do
     ngx.say(line)
 end
