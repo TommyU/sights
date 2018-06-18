@@ -68,6 +68,31 @@ function website_watch(video_data){
      });
 }
 
+function delete_video(hash){
+    console.log("will delete video:"+hash);
+}
+
+function display_downloaded_list(){
+    $.get( "/api/watched_list", function( data ) {
+        html = "";
+        if(data.msg != undefined){
+            $("result").html(data.msg)
+        }else{
+            for(var i=0;i<data.length;i++){
+                html +="<tr><td>" + (i+1) + "</td>";
+                html +="<td>"+data[i].last_downloaded_time+"</td>";
+                html +="<td>"+data[i].downloaded_times+"</td>";
+                html +="<td>"+data[i].video_name+"</td>";
+                html +="<td>"+data[i].keyword+"</td>";
+                html +="<td>"+data[i].video_size+"</td>";
+                html +="<td>"+data[i].is_deleted+"</td>";
+                html +='<td><button class="btn btn-info mr-sm-1" type="button" onclick=delete_video(\''+data[i].hash+'\')>delete</button></td></tr>';
+	        }
+	        $( "#result_watched_list" ).html(html);
+        }
+    });
+}
+
 $(function(){
     $('form').submit(false);  //disable submit of forms
     $('#q').bind('keypress', function(event){
