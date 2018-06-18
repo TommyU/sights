@@ -91,7 +91,7 @@ function _M:download_from_youtube(video_url, keyword, video_name)
 end
 
 function _M:get_downloaded_list()
-    local sql = [[select * from sights.video_tab where is_deleted=0]]
+    local sql = [[select id, video_name, ctime, last_downloaded_time, downloaded_times, keyword, youtube_url_hash  as hash, is_deleted, deleted_time from sights.video_tab ]]
     local res = assert(mysql_client:query(sql))
     return res
 end
