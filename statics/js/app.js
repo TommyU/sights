@@ -68,6 +68,23 @@ function website_watch(video_data){
      });
 }
 
+function watch_by_hash(hash){
+    $("#myMovie").show();
+
+    var $dom =$("#player", $("#myMovie"))
+    if($dom && $dom.attr("userdata")==hash){
+        //$("#panel_display").max_size();
+    }else{
+        var v_html = '<video id="player" width="100%" height="auto" autoplay="autoplay" userdata="'+hash+'" controls>';
+        v_html+='<source src="/videos/'+hash+'.mp4" type="video/mp4" codecs="avc1.42E01E, mp4a.40.2"> </video>';
+        $("#myMovieBody").html(v_html);
+        $("#btn_pause_mv").bind("click", function(){
+            $("#player").get(0).pause();
+            $("#myMovie").hide();
+        });
+    }
+}
+
 function delete_video(hash){
     console.log("will delete video:"+hash);
 }
@@ -96,11 +113,11 @@ function display_downloaded_list(){
                 html +="<tr><td>" + (i+1) + "</td>";
                 html +="<td>"+date_obj.toLocaleDateString() + date_obj.toLocaleTimeString()+"</td>";
                 html +="<td>"+data[i].downloaded_times+"</td>";
-                html +="<td>"+decodeURI(data[i].video_name)+"</td>";
+                html +="<td><a href='javascript:void(0)' onclick='watch_by_hash(\""+data[i].hash+"\")"+decodeURI(data[i].video_name)+"</a></td>";
                 html +="<td>"+decodeURI(data[i].keyword)+"</td>";
                 html +="<td>"+data[i].video_size+"</td>";
                 html +="<td>"+data[i].is_deleted?'Y':'N'+"</td>";
-                html +='<td><button class="btn btn-info mr-sm-1" type="button" onclick=delete_video(\''+data[i].hash+'\')>delete</button></td></tr>';
+                html +='<td><button class="btn btn-info mr-sm-1" type="button" onclick=delete_video(\''+data[i].hash+'\')>del</button></td></tr>';
 	        }
 	        $( "#result_watched_list" ).html(html);
         }
