@@ -79,11 +79,12 @@ function display_downloaded_list(){
             $("result").html(data.msg)
         }else{
             for(var i=0;i<data.length;i++){
+                var date_obj = new Date(data[i].last_downloaded_time*1000);
                 html +="<tr><td>" + (i+1) + "</td>";
-                html +="<td>"+data[i].last_downloaded_time+"</td>";
+                html +="<td>"+date_obj.toLocaleDateString() + date_obj.toLocaleTimeString()+"</td>";
                 html +="<td>"+data[i].downloaded_times+"</td>";
-                html +="<td>"+data[i].video_name+"</td>";
-                html +="<td>"+data[i].keyword+"</td>";
+                html +="<td>"+decodeURI(data[i].video_name)+"</td>";
+                html +="<td>"+decodeURI(data[i].keyword)+"</td>";
                 html +="<td>"+data[i].video_size+"</td>";
                 html +="<td>"+data[i].is_deleted+"</td>";
                 html +='<td><button class="btn btn-info mr-sm-1" type="button" onclick=delete_video(\''+data[i].hash+'\')>delete</button></td></tr>';
