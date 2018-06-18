@@ -22,6 +22,17 @@ local function exists(name)
     end
 end
 
+local function get_file_size(file_name)
+    local f = io.open(file_name, "r")
+    if f ~= nil then
+        local size = f:seek('end')
+        io.close(f)
+        return size
+    else
+        return 0
+    end
+end
+
 local function update_redis_cache(video_url_hash, video_path)
     local downloading_info = cjson.encode({ video_path = video_path })
     redis_client:set(video_url_hash, downloading_info, EXPIRE_SECONDS)
@@ -46,6 +57,18 @@ local function add2db(keyword, video_url, video_name)
     video_name = ndk.set_var.set_quote_sql_str(video_name)
 
     sql = string.format(sql, ngx.time(), keyword, video_url, video_url_hash, video_name, ngx.time(), stored_path, video_size)
+    local res = assert(mysql_client:query(sql))
+    return res
+end
+
+local function update_video_size(id, real_size)
+    local sql = [[update sights.video_tab set video_size=%d where id=%d]]
+
+    id = ndk.set_var.set_quote_sql_str(id)
+    real_size = ndk.set_var.set_quote_sql_str(real_size)
+
+    ngx.log(ngx.DEBUG, sql)
+    sql = string.format(sql, id, hash)
     local res = assert(mysql_client:query(sql))
     return res
 end
@@ -86,6 +109,17 @@ end
 function _M:get_downloaded_list()
     local sql = [[select id, video_name, video_size, ctime, last_downloaded_time, downloaded_times, keyword, youtube_url_hash  as hash, is_deleted, deleted_time from sights.video_tab ]]
     local res = assert(mysql_client:query(sql))
+    return res
+end
+
+function _M:update_all_video_sizes()
+    local sql = [[select id,  youtube_url_hash  as hash from sights.video_tab where  video_size is null or video_size=0]]
+    local res = assert(mysql_client:query(sql))
+    for _, line in ipairs(res) do
+        local fn = constants:get_stored_path(line.hash)
+        local real_size = get_file_size(fn)
+        update_video_size(line.id, real_size)
+    end
     return res
 end
 
