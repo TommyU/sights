@@ -32,8 +32,8 @@ local function get_stored_path(video_url_hash)
 end
 
 local function add2db(keyword, video_url, video_name)
-    local sql = [[insert into sights.video_tab(ctime, keyword, youtube_url, youtube_url_hash, video_name, last_downloaded_time, stored_path)
-    values(%d, %s, %s, '%s', %s, %d, %s)]]
+    local sql = [[insert into sights.video_tab(ctime, keyword, youtube_url, youtube_url_hash, video_name, last_downloaded_time, stored_path, video_size)
+    values(%d, %s, %s, '%s', %s, %d, %s, %d)]]
     keyword = ndk.set_var.set_quote_sql_str(keyword)
     video_url = ndk.set_var.set_quote_sql_str(video_url)
     video_name = ndk.set_var.set_quote_sql_str(video_name)
@@ -41,18 +41,10 @@ local function add2db(keyword, video_url, video_name)
     local stored_path = get_stored_path(video_url_hash)
     video_url_hash = ndk.set_var.set_quote_sql_str(video_url_hash)
     stored_path = ndk.set_var.set_quote_sql_str(stored_path)
+    local video_size = 0
 
     local video_url_hash = constants:get_video_hash(video_url)
-    local params = {
-        ngx.time(), keyword, video_url,
-        video_url_hash, video_name,
-        ngx.time(), stored_path
-    }
-
-    for _, v in ipairs(params) do
-        ngx.log(ngx.DEBUG, '==>' .. v)
-    end
-    sql = string.format(sql, params[1], params[2], params[3], params[4], params[5], params[6], params[7])
+    sql = string.format(sql, ngx.time(), keyword, video_url, video_url_hash, video_name, ngx.time(), stored_path, video_size)
     local res = assert(mysql_client:query(sql))
     return res
 end

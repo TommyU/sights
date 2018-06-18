@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `sights`.`video_tab` (
 	`youtube_url` BLOB NOT NULL,
 	`youtube_url_hash` VARCHAR(64) NOT NULL,
 	`video_name` VARCHAR(512) NOT NULL,
+	`video_size` INT UNSIGNED NULL,
 	`stored_path` VARCHAR(1024) ,
 	`is_deleted` TINYINT UNSIGNED NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`),
