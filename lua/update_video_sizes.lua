@@ -6,6 +6,6 @@
 local video_utils = require("libs.video_utils")
 local response = require("libs.response")
 
-response.json_response({msg = "accepted"})
+response.json_response({msg = "accepted"}, 200, true)
 ngx.timer.at(0, video_utils.update_all_video_sizes)
 

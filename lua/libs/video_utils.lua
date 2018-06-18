@@ -64,11 +64,8 @@ end
 local function update_video_size(id, real_size)
     local sql = [[update sights.video_tab set video_size=%d where id=%d]]
 
-    id = ndk.set_var.set_quote_sql_str(id)
-    real_size = ndk.set_var.set_quote_sql_str(real_size)
-
     ngx.log(ngx.DEBUG, sql)
-    sql = string.format(sql, id, hash)
+    sql = string.format(sql, real_size, id)
     local res = assert(mysql_client:query(sql))
     return res
 end
@@ -113,10 +110,12 @@ function _M:get_downloaded_list()
 end
 
 function _M:update_all_video_sizes()
+    ngx.log(ngx.DEBUG, 'all sizes updating triggered...')
     local sql = [[select id,  youtube_url_hash  as hash from sights.video_tab where  video_size is null or video_size=0]]
     local res = assert(mysql_client:query(sql))
     for _, line in ipairs(res) do
-        local fn = constants:get_stored_path(line.hash)
+        ngx.log(ngx.DEBUG, 'processing size for ' .. line.id)
+        local fn = get_stored_path(line.hash)
         local real_size = get_file_size(fn)
         update_video_size(line.id, real_size)
     end
