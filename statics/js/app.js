@@ -113,7 +113,7 @@ function display_downloaded_list(){
                 html +="<tr><td>" + (i+1) + "</td>";
                 html +="<td>"+date_obj.toLocaleDateString() + date_obj.toLocaleTimeString()+"</td>";
                 html +="<td>"+data[i].downloaded_times+"</td>";
-                html +="<td><a href='javascript:void(0)' onclick='watch_by_hash(\""+data[i].hash+"\")"+decodeURI(data[i].video_name)+"</a></td>";
+                html +="<td><a href='javascript:void(0)' onclick=watch_by_hash(\""+data[i].hash+"\")>"+decodeURI(data[i].video_name)+"</a></td>";
                 html +="<td>"+decodeURI(data[i].keyword)+"</td>";
                 html +="<td>"+data[i].video_size+"</td>";
                 html +="<td>"+data[i].is_deleted?'Y':'N'+"</td>";
