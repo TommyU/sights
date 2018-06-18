@@ -72,11 +72,22 @@ function delete_video(hash){
     console.log("will delete video:"+hash);
 }
 
+function display_disk_usage(){
+    $.get( "/api/disk_usage", function( data ) {
+        html = "";
+        if(data.msg != undefined){
+            $("result_watched_list").html(data.msg)
+        }else{
+            $("result_watched_list").html(data)
+        }
+    }
+}
+
 function display_downloaded_list(){
     $.get( "/api/watched_list", function( data ) {
         html = "";
         if(data.msg != undefined){
-            $("result").html(data.msg)
+            $("result_watched_list").html(data.msg)
         }else{
             for(var i=0;i<data.length;i++){
                 var date_obj = new Date(data[i].last_downloaded_time*1000);
@@ -86,7 +97,7 @@ function display_downloaded_list(){
                 html +="<td>"+decodeURI(data[i].video_name)+"</td>";
                 html +="<td>"+decodeURI(data[i].keyword)+"</td>";
                 html +="<td>"+data[i].video_size+"</td>";
-                html +="<td>"+data[i].is_deleted+"</td>";
+                html +="<td>"+data[i].is_deleted?'Y':'N'+"</td>";
                 html +='<td><button class="btn btn-info mr-sm-1" type="button" onclick=delete_video(\''+data[i].hash+'\')>delete</button></td></tr>';
 	        }
 	        $( "#result_watched_list" ).html(html);
