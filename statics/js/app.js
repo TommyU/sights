@@ -102,6 +102,17 @@ function display_disk_usage(){
     });
 }
 
+function update_video_sizes(){
+    $.get( "/api/update_video_sizes", function( data ) {
+        html = "";
+        if(data.msg != undefined){
+            $("#myModalLabel").html("on updating sizes");
+            $("#myModalBody").html("<p>" + data.msg + "</p>");
+            $("#myModal").show();
+        }
+    });
+}
+
 function display_downloaded_list(){
     $.get( "/api/watched_list", function( data ) {
         html = "";
@@ -115,7 +126,7 @@ function display_downloaded_list(){
                 html +="<td>"+data[i].downloaded_times+"</td>";
                 html +="<td><a href='javascript:void(0)' onclick=watch_by_hash(\""+data[i].hash+"\")>"+decodeURI(data[i].video_name)+"</a></td>";
                 html +="<td>"+decodeURI(data[i].keyword)+"</td>";
-                html +="<td>"+data[i].video_size+"</td>";
+                html +="<td>"+Math.round(data[i].video_size/1048576)+"M </td>";
                 html +="<td>"+(data[i].is_deleted==1?'Y':'N')+"</td>";
                 html +='<td><button class="btn btn-info mr-sm-1" type="button" onclick=delete_video(\''+data[i].hash+'\')>del</button></td></tr>';
 	        }
