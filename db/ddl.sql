@@ -22,6 +22,19 @@ CREATE TABLE IF NOT EXISTS `sights`.`video_tab` (
 COLLATE='utf8_unicode_ci'
 ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `sights`.`admin` (
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`ctime` INT UNSIGNED NOT NULL,
+	`account` VARCHAR(64) NOT NULL,
+	`password` VARCHAR(32) NOT NULL,
+	`is_super_admin` INT UNSIGNED NULL,
+	`is_deleted` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX idx_account (`account`)
+)
+COLLATE='utf8_unicode_ci'
+ENGINE=InnoDB;
+
 grant all privileges on sight.* to 'sights'@'127.0.0.1' identified by 'sights_pw';
 grant all privileges on sight.* to 'sights'@'localhost' identified by 'sights_pw';
 
