@@ -78,6 +78,7 @@ function watch_by_hash(hash){
         var v_html = '<video id="player" width="100%" height="auto" autoplay="autoplay" userdata="'+hash+'" controls>';
         v_html+='<source src="/videos/'+hash+'.mp4" type="video/mp4" codecs="avc1.42E01E, mp4a.40.2"> </video>';
         $("#myMovieBody").html(v_html);
+        $("#myMovieShare").html("<a href='javascript:void(0)' onclick=copy2clipboard('http://"+window.location.host+"/v/watch?hash="+hash+"')>分享链接</a>")
         $("#btn_pause_mv").bind("click", function(){
             $("#player").get(0).pause();
             $("#myMovie").hide();
@@ -133,6 +134,14 @@ function display_downloaded_list(){
 	        $( "#result_watched_list" ).html(html);
         }
     });
+}
+
+function copy2clipboard(value) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val(value).select();
+    document.execCommand("copy");
+    $temp.remove();
 }
 
 $(function(){

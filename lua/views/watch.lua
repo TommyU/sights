@@ -12,7 +12,13 @@ if not movie_hash then
 end
 
 html = string.format([[
+<html>
+<head>
+<title>sights</title>
+</head><body>
 <video id="player" width="%s" height="auto" autoplay="autoplay"  controls>
 <source src="/videos/%s.mp4" type="video/mp4" codecs="avc1.42E01E, mp4a.40.2"> </video>
+</body>
+</html>
 ]],'100%', movie_hash)
 ngx.say(html)
