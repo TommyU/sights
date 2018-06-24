@@ -31,8 +31,10 @@ function website_watch(video_data){
     var keyword = btoa(array[0]);
     var url = btoa(array[1]);
     var title = btoa(array[2]);
-    $("#panel_list").hide();
-    $("#panel_display").show();
+    //$("#panel_list").hide();
+    var container_id="myMovie";
+    var movie_container="myMovieBody";
+    $(container_id).show();
 
      $.get( "/api/video_status?keyword="+keyword+"&video_name="+title+"&video_url="+url, function( data ) {
          html = "";
@@ -43,27 +45,27 @@ function website_watch(video_data){
                     '<span class="sr-only">75% Complete</span>' +
                    '</div>' +
                   '</div>';
-                 $("#panel_display").html("<h1>loading...</h1>" + html_loading);
+                 $(movie_container).html("<h1>loading...</h1>" + html_loading);
                  video_data = btoa(video_data);
                  setTimeout("website_watch('"+video_data+"')", 1000);
              }else{
-                 //window.location = "/watch.html?data="+video_data
                  var video_uri = data.video_uri
                  if(video_uri==undefined){
-                     alert("server error!");
+                     $(movie_container).html("<h1>server error!.</h1>" );
                  }else{
-                     var $dom =$("#player", $("#panel_display"))
+                     var $dom =$("#player", $(movie_container))
                      if($dom && $dom.attr("userdata")==video_data){
-                         //$("#panel_display").max_size();
+
                      }else{
                          var v_html = '<video id="player" width="100%" height="auto" autoplay="autoplay" userdata="'+video_data+'" controls>';
                          v_html+='<source src="'+video_uri+'" type="video/mp4" codecs="avc1.42E01E, mp4a.40.2"> </video>';
-                         $("#panel_display").html(v_html);
+                         $(movie_container).html(v_html);
                      }
                  }
              }
          }else{
              alert(data.msg);
+             $(movie_container).html("<h1>server error!.</h1>" + data.msg);
          }
      });
 }

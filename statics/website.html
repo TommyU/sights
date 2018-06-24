@@ -57,9 +57,23 @@
                     </tbody>
                 </table>
             </div>
-            <div class="table-responsive" id="panel_display" style="display:none">
 
+            <div class="modal" tabindex="-1" role="dialog" id="myMovie">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="btn_pause_mv">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <span id="myMovieShare"></span>
+                        </div>
+                        <div class="modal-body" id="myMovieBody">
+                            <p>Modal body text goes here.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
+
         </main>
     </div>
 </div>
