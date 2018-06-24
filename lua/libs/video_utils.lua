@@ -104,7 +104,7 @@ function _M:download_from_youtube(video_url, keyword, video_name)
 end
 
 function _M:get_downloaded_list()
-    local sql = [[select id, video_name, video_size, ctime, last_downloaded_time, downloaded_times, keyword, youtube_url_hash  as hash, is_deleted, deleted_time from sights.video_tab ]]
+    local sql = [[select id, video_name, video_size, ctime, last_downloaded_time, downloaded_times, keyword, youtube_url_hash  as hash, is_deleted, deleted_time from sights.video_tab where is_deleted=0 ]]
     local res = assert(mysql_client:query(sql))
     return res
 end
@@ -120,6 +120,16 @@ function _M:update_all_video_sizes()
         update_video_size(line.id, real_size)
     end
     return res
+end
+
+function _M:delete_video(video_url_hash)
+    ngx.log(ngx.DEBUG, 'video deleting triggered...')
+    video_url_hash = ndk.set_var.set_quote_sql_str(video_url_hash)
+    local sql = string.format([[update sights.video_tab set is_deleted=1 where  youtube_url_hash=%s]], video_url_hash)
+    assert(mysql_client:query(sql))
+    local stored_path = get_stored_path(video_url_hash)
+    redis_client:delete(video_url_hash)
+    ngx.execute("rm " .. stored_path)
 end
 
 return _M

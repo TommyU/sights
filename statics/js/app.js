@@ -61,10 +61,10 @@ function website_watch(video_data){
                          v_html+='<source src="'+video_uri+'" type="video/mp4" codecs="avc1.42E01E, mp4a.40.2"> </video>';
                          $(movie_container).html(v_html);
                          $("#myMovieShare").html("<a href='javascript:void(0)' onclick=copy2clipboard('http://"+window.location.host+"/v/watch?hash="+data.hash+"')>分享链接</a>")
-        $("#btn_pause_mv").bind("click", function(){
-            $("#player").get(0).pause();
-            $(container_id).hide();
-        });
+                         $("#btn_pause_mv").bind("click", function(){
+                              $("#player").get(0).pause();
+                              $(container_id).hide();
+                          });
                      }
                  }
              }
@@ -95,6 +95,16 @@ function watch_by_hash(hash){
 
 function delete_video(hash){
     console.log("will delete video:"+hash);
+    $.get( "/api/delete_video?hash="+hash, function( data ) {
+            html = "";
+            if(data.msg != undefined){
+                $("#panel_watched_list").html(data.msg)
+            }else{
+                $("#myModalLabel").html("disk usages");
+                $("#myModalBody").html("<pre>" + data + "</pre>");
+                $("#myModal").show();
+            }
+        });
 }
 
 function display_disk_usage(){

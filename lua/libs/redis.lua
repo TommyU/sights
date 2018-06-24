@@ -56,4 +56,10 @@ function _M:set(key, value, timeout_in_seconds)
     self:close()
 end
 
+function _M:delete(key)
+    assert(self:connect())
+    self.redis_client:delete(key)
+    self:close()
+end
+
 return _M
