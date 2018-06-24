@@ -145,7 +145,7 @@ function display_downloaded_list(){
                 html +="<td><a href='javascript:void(0)' onclick=watch_by_hash(\""+data[i].hash+"\")>"+decodeURI(data[i].video_name)+"</a></td>";
                 html +="<td>"+decodeURI(data[i].keyword)+"</td>";
                 html +="<td>"+Math.round(data[i].video_size/1048576)+"M </td>";
-                html +="<td>"+(data[i].is_deleted==1?'Y':'N')+"</td>";
+                //html +="<td>"+(data[i].is_deleted==1?'Y':'N')+"</td>";
                 html +='<td><button class="btn btn-info mr-sm-1" type="button" onclick=delete_video(\''+data[i].hash+'\')>del</button></td></tr>';
 	        }
 	        $( "#result_watched_list" ).html(html);

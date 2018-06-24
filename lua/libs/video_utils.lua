@@ -129,7 +129,7 @@ function _M:delete_video(video_url_hash)
     assert(mysql_client:query(sql))
     local stored_path = get_stored_path(video_url_hash)
     redis_client:delete(video_url_hash)
-    ngx.execute("rm " .. stored_path)
+    os.execute("rm " .. stored_path)
 end
 
 return _M
