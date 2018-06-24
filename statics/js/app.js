@@ -60,7 +60,7 @@ function website_watch(video_data){
                          var v_html = '<video id="player" width="100%" height="auto" autoplay="autoplay" userdata="'+video_data+'" controls>';
                          v_html+='<source src="'+video_uri+'" type="video/mp4" codecs="avc1.42E01E, mp4a.40.2"> </video>';
                          $(movie_container).html(v_html);
-                         $("#myMovieShare").html("<a href='javascript:void(0)' onclick=copy2clipboard('http://"+window.location.host+"/v/watch?hash="+data.hash+"')>分享链接</a>")
+                         $("#myMovieShare").html("<a href='javascript:void(0)' onclick=copy2clipboard('http://"+window.location.host+"/v/watch?hash="+data.hash+"')>复制链接</a>")
                          $("#btn_pause_mv").bind("click", function(){
                               $("#player").get(0).pause();
                               $(container_id).hide();
@@ -85,7 +85,7 @@ function watch_by_hash(hash){
         var v_html = '<video id="player" width="100%" height="auto" autoplay="autoplay" userdata="'+hash+'" controls>';
         v_html+='<source src="/videos/'+hash+'.mp4" type="video/mp4" codecs="avc1.42E01E, mp4a.40.2"> </video>';
         $("#myMovieBody").html(v_html);
-        $("#myMovieShare").html("<a href='javascript:void(0)' onclick=copy2clipboard('http://"+window.location.host+"/v/watch?hash="+hash+"')>分享链接</a>")
+        $("#myMovieShare").html("<a href='javascript:void(0)' onclick=copy2clipboard('http://"+window.location.host+"/v/watch?hash="+hash+"')>复制链接</a>")
         $("#btn_pause_mv").bind("click", function(){
             $("#player").get(0).pause();
             $("#myMovie").hide();
