@@ -1,5 +1,5 @@
 # sights
-open a doll for friends under the wall to see outside world.
+open a door for friends under the wall to see outside world.
 
 # what it do
 ## search any youtube video
