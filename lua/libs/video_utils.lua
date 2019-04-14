@@ -39,7 +39,7 @@ local function update_redis_cache(video_url_hash, video_path)
 end
 
 local function get_stored_path(video_url_hash)
-    return '/data/' .. video_url_hash .. '.mp4'
+    return '/root/sights/statics/videos/' .. video_url_hash .. '.mp4'
 end
 
 local function add2db(keyword, video_url, video_name)
