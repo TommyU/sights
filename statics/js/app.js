@@ -100,6 +100,20 @@ function delete_video(hash){
             if(data.msg != undefined){
                 $("#panel_watched_list").html(data.msg)
             }else{
+                $("#myModalLabel").html("deleted");
+                $("#myModalBody").html("<pre>" + data + "</pre>");
+                $("#myModal").show();
+            }
+        });
+}
+
+function sync_video(video_id){
+    console.log("will mark video as need2sync:"+video_id);
+    $.get( "/api/need2sync?id="+video_id, function( data ) {
+            html = "";
+            if(data.msg != undefined){
+                $("#panel_watched_list").html(data.msg)
+            }else{
                 $("#myModalLabel").html("disk usages");
                 $("#myModalBody").html("<pre>" + data + "</pre>");
                 $("#myModal").show();
@@ -140,13 +154,18 @@ function display_downloaded_list(){
             for(var i=0;i<data.length;i++){
                 var date_obj = new Date(data[i].last_downloaded_time*1000);
                 html +="<tr><td>" + (i+1) + "</td>";
-                html +="<td>"+date_obj.toLocaleDateString() + date_obj.toLocaleTimeString()+"</td>";
-                html +="<td>"+data[i].downloaded_times+"</td>";
+                //html +="<td>"+date_obj.toLocaleDateString() + date_obj.toLocaleTimeString()+"</td>";
+                //html +="<td>"+data[i].downloaded_times+"</td>";
+                html +="<td>"+data[i].need2sync+"</td>";
+                html +="<td>"+data[i].is_synced+"</td>";
                 html +="<td><a href='javascript:void(0)' onclick=watch_by_hash(\""+data[i].hash+"\")>"+decodeURI(data[i].video_name)+"</a></td>";
                 html +="<td>"+decodeURI(data[i].keyword)+"</td>";
                 html +="<td>"+Math.round(data[i].video_size/1048576)+"M </td>";
                 //html +="<td>"+(data[i].is_deleted==1?'Y':'N')+"</td>";
-                html +='<td><button class="btn btn-info mr-sm-1" type="button" onclick=delete_video(\''+data[i].hash+'\')>del</button></td></tr>';
+                html +='<td>';
+                html +='<button class="btn btn-info mr-sm-1" type="button" onclick=delete_video(\''+data[i].hash+'\')>del</button>'
+                html +='<button class="btn btn-info mr-sm-1" type="button" onclick=sync_video('+data[i].id+')>need sync</button>'
+                html +='</td></tr>';
 	        }
 	        $( "#result_watched_list" ).html(html);
         }

@@ -104,7 +104,7 @@ function _M:download_from_youtube(video_url, keyword, video_name)
 end
 
 function _M:get_downloaded_list()
-    local sql = [[select id, video_name, video_size, ctime, last_downloaded_time, downloaded_times, keyword, youtube_url_hash  as hash, is_deleted, deleted_time from sights.video_tab where is_deleted=0 ]]
+    local sql = [[select id, video_name, video_size, ctime, last_downloaded_time, downloaded_times, keyword, youtube_url_hash  as hash, is_deleted, deleted_time, need2sync, is_synced from sights.video_tab where is_deleted=0 ]]
     local res = assert(mysql_client:query(sql))
     return res
 end
@@ -115,8 +115,15 @@ function _M:get_list2sync()
     return res
 end
 
+function _M:mark_video_need2sync(video_id)
+    local sql = [[update sights.video_tab set need2sync=1 where id=%s ]]
+    sql = string.format(sql, video_id)
+    local res = assert(mysql_client:query(sql))
+    return res
+end
+
 function _M:mark_job_synced(video_id)
-    local sql = [[update sights.video_tab set is_synced=1, downloaded_times=downloaded_times+1 where id=%d ]]
+    local sql = [[update sights.video_tab set is_synced=1, downloaded_times=downloaded_times+1 where id=%s ]]
     sql = string.format(sql, video_id)
     local res = assert(mysql_client:query(sql))
     return res
