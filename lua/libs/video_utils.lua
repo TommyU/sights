@@ -39,7 +39,7 @@ local function update_redis_cache(video_url_hash, video_path)
 end
 
 local function get_stored_path(video_url_hash)
-    return '/root/sights/statics/videos/' .. video_url_hash .. '.mp4'
+    return '/data/' .. video_url_hash .. '.mp4'
 end
 
 local function add2db(keyword, video_url, video_name)
@@ -105,6 +105,19 @@ end
 
 function _M:get_downloaded_list()
     local sql = [[select id, video_name, video_size, ctime, last_downloaded_time, downloaded_times, keyword, youtube_url_hash  as hash, is_deleted, deleted_time from sights.video_tab where is_deleted=0 ]]
+    local res = assert(mysql_client:query(sql))
+    return res
+end
+
+function _M:get_list2sync()
+    local sql = [[select id, video_name, video_size, keyword, youtube_url_hash  as hash from sights.video_tab where is_deleted=0 and need2sync=1 and is_synced=0 ]]
+    local res = assert(mysql_client:query(sql))
+    return res
+end
+
+function _M:mark_job_synced(video_id)
+    local sql = [[update sights.video_tab set is_synced=1, downloaded_times=downloaded_times+1 where id=%d ]]
+    sql = string.format(sql, video_id)
     local res = assert(mysql_client:query(sql))
     return res
 end

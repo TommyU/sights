@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS `sights`.`video_tab` (
 	`video_size` INT UNSIGNED NULL,
 	`stored_path` VARCHAR(1024) ,
 	`is_deleted` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+	`is_synced` TINYINT UNSIGNED DEFAULT 0 COMMENT 'whether this video is downloaded to home disk',
+	`need2sync` TINYINT UNSIGNED DEFAULT 0 COMMENT 'whether it is intrested for home theatre',
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX idx_video_hash (`youtube_url_hash`),
 	INDEX idx_dtime_status (`last_downloaded_time`, `is_deleted`)
