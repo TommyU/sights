@@ -35,7 +35,8 @@ end
 
 local function update_redis_cache(video_url_hash, video_path)
     local downloading_info = cjson.encode({ video_path = video_path })
-    redis_client:set(video_url_hash, downloading_info, EXPIRE_SECONDS)
+    local rc=redis_client:new(true)
+    rc:set(video_url_hash, downloading_info, EXPIRE_SECONDS)
 end
 
 local function get_stored_path(video_url_hash)
@@ -148,7 +149,8 @@ function _M:delete_video(video_url_hash)
     local sql = string.format([[update sights.video_tab set is_deleted=1 where  youtube_url_hash=%s]], video_url_hash)
     assert(mysql_client:query(sql))
     local stored_path = get_stored_path(video_url_hash)
-    redis_client:delete(video_url_hash)
+    local rc=redis_client:new(true)
+    rc:delete(video_url_hash)
     os.execute("rm " .. stored_path)
 end
 

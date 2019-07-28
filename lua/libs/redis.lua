@@ -3,14 +3,17 @@
 --- Created by tommy.
 --- DateTime: 2018/6/16 下午4:30
 ---
+local redis = require "resty.redis"
 local _M = { redis_client = nil, enable_pool = true }
 _M.__index = _M
 
-function _M:connect()
-    local redis = require "resty.redis"
-    self.redis_client = redis:new()
-    self.redis_client:set_timeout(1000) -- 1 sec
+function _M:new(enable_pool)
+    local redis_client = redis:new()
+    redis_client:set_timeout(1000) -- 1 sec
+    return setmetatable({ redis_client = redis_client, enable_pool = enable_pool or true }, _M)
+end
 
+function _M:connect()
     local ok, err = self.redis_client:connect("127.0.0.1", 6379)
     if not ok then
         local err_msg = "failed to connect: " .. err
@@ -53,7 +56,7 @@ function _M:set(key, value, timeout_in_seconds)
     assert(self:connect())
     self.redis_client:set(key, value)
     ngx.log(ngx.INFO, string.format("time out is %s", timeout_in_seconds))
-    local _, err = self.redis_client:expire(key, tostring(timeout_in_seconds))
+    local _, err = self.redis_client:expire(key, timeout_in_seconds)
     self:close(err)
 end
 
