@@ -52,7 +52,8 @@ end
 function _M:set(key, value, timeout_in_seconds)
     assert(self:connect())
     self.redis_client:set(key, value)
-    self.redis_client:expire(key, timeout_in_seconds*1000)
+    ngx.log(ngx.INFO, string.format("time out is %s", timeout_in_seconds))
+    self.redis_client:expire(key, tostring(timeout_in_seconds))
     self:close()
 end
 
