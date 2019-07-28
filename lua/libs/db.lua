@@ -38,8 +38,8 @@ function _M:connect()
     return true
 end
 
-function _M:close()
-    if self.enable_pool then
+function _M:close(err)
+    if self.enable_pool and not err then
         local ok, err = self.client:set_keepalive(10000, 100)
         if not ok then
             local err_msg = "failed to set keepalive: " .. err
@@ -61,9 +61,9 @@ function _M:query(sql)
     -- TODO: params must prevent sql-injection
     assert(self:connect())
 
-    res, err, errno, sqlstate = self.client:query(sql)
+    local res, err, errno, sqlstate = self.client:query(sql)
 
-    assert(self:close())
+    assert(self:close(err))
 
     ngx.log(ngx.DEBUG, "=====sql=" .. sql)
     if err then
