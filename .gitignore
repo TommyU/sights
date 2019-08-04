@@ -2,3 +2,5 @@
 logs/
 videos/
 *.go
+*.pem
+passwd
