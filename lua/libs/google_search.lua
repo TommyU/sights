@@ -86,7 +86,7 @@ function _M.proxy_request(is_https, host, port)
     _httpc:set_timeouts(3000, 5000, 10000)
     local _, err = _httpc:connect(host, port)
     if err then
-        ngx.log(ngx.ERR, "connect to " .. host "  error:" .. err)
+        ngx.log(ngx.ERR, "connect to " .. host .. "  error:" .. err)
         _httpc:close()
         return nil, err
     end
@@ -144,8 +144,10 @@ function _M.proxy_request(is_https, host, port)
     -- 2. body
     ngx.print(res_body)
     -- 3. headers
-    for k, v in pairs(res.header) do
-        ngx.header[k] = v
+    if res ~= ngx.null and res.headers ~= nil then
+        for k, v in pairs(res.header) do
+            ngx.header[k] = v
+        end
     end
 
     ngx.exit(ngx.HTTP_OK)  -- https://segmentfault.com/a/1190000004534300
