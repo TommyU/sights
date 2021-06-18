@@ -86,7 +86,7 @@ function _M.proxy_request(is_https, host, port)
     _httpc:set_timeouts(3000, 5000, 10000)
     local _, err = _httpc:connect(host, port)
     if err then
-        ngx.log(ngx.ERR, "connect to " .. host "  error:" .. err)
+        ngx.log(ngx.ERR, "connect to " .. host .. "  error:" .. err)
         _httpc:close()
         return nil, err
     end
