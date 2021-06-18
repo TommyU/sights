@@ -144,8 +144,10 @@ function _M.proxy_request(is_https, host, port)
     -- 2. body
     ngx.print(res_body)
     -- 3. headers
-    for k, v in pairs(res.header) do
-        ngx.header[k] = v
+    if res ~= ngx.null and res.headers ~= nil then
+        for k, v in pairs(res.header) do
+            ngx.header[k] = v
+        end
     end
 
     ngx.exit(ngx.HTTP_OK)  -- https://segmentfault.com/a/1190000004534300
