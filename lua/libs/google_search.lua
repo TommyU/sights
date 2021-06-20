@@ -105,6 +105,9 @@ function _M.proxy_request(is_https, host, port)
     local path = ngx_var.uri
     local uri_args, _ = ngx_req.get_uri_args(1000)
     local headers, _ = ngx_req.get_headers()
+    headers['host'] = host
+    ngx.log(ngx.ERR, "====" .. cjson.encode(headers))
+
 
     local res, err1 = _httpc:request({
         method = method,
@@ -141,14 +144,18 @@ function _M.proxy_request(is_https, host, port)
         ngx.status = ngx.HTTP_OK
     end
 
-    -- 2. body
-    ngx.print(res_body)
-    -- 3. headers
+    -- 2. headers
     if res ~= ngx.null and res.headers ~= nil then
-        for k, v in pairs(res.header) do
+        for k, v in pairs(res.headers) do
             ngx.header[k] = v
         end
     end
+    if not ngx.header['Content-Type'] then
+        ngx.header['Content-Type'] = 'text/html'
+    end
+
+    -- 3. body
+    ngx.print(res_body)
 
     ngx.exit(ngx.HTTP_OK)  -- https://segmentfault.com/a/1190000004534300
 
