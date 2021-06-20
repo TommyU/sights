@@ -7,6 +7,7 @@ local require = require
 local ngx = ngx
 local ngx_req = ngx.req
 local ngx_var = ngx.var
+local ngx_re = ngx.re
 local io_open = io.open
 local tostring = tostring
 local string_upper = string.upper
@@ -152,6 +153,9 @@ function _M.proxy_request(is_https, host, port)
     end
     if not ngx.header['Content-Type'] then
         ngx.header['Content-Type'] = 'text/html'
+    end
+    if ngx.header['Location'] then
+        ngx.header['Location'] = ngx_re.sub(ngx.header['Location'], host, ngx_var.host .. ':' .. tostring(ngx_var.server_port))
     end
 
     -- 3. body
