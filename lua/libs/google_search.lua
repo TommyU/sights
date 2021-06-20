@@ -92,7 +92,7 @@ function _M.proxy_request(is_https, host, port)
         return nil, err
     end
     if is_https then
-        local _, err = _httpc:ssl_handshake(nil, host)
+        local _, err = _httpc:ssl_handshake(nil, host, true)
         if err then
             _httpc:close()
             ngx.log(ngx.ERR, "ssl handshake fail:  " .. host .. " err:" .. err)
