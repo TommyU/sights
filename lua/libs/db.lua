@@ -26,7 +26,7 @@ function _M:connect()
     }
 
     if not ok then
-        local err_msg = "failed to connect: ", err, ": ", errno, " ", sqlstate
+        local err_msg = "failed to connect: " .. err .. ": " .. errno .. " " .. sqlstate
         ngx.log(ngx.ERR, err_msg)
         return false, err_msg
     end
